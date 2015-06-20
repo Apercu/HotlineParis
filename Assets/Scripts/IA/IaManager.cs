@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class IaManager : MonoBehaviour {
 	
@@ -13,6 +14,7 @@ public class IaManager : MonoBehaviour {
 	private bool isWalking;
 	private bool isLooking;
 
+	private bool isGoingToBercail = false;
 	private bool hasMoved = false;
 	private bool chasing = false;
 	private bool hasPlayerInSight = false;
@@ -23,6 +25,9 @@ public class IaManager : MonoBehaviour {
 	private Animator head;
 	private SpriteRenderer alert;
 	private PolygonCollider2D sightCollider;
+	private List<Vector3> paths = new List<Vector3>();
+
+	private float nextTime = 0.0f;
 
 	void Start () {
 
@@ -66,6 +71,25 @@ public class IaManager : MonoBehaviour {
 
 		isWalking = false;
 
+		// Get to the bercail
+		if (isGoingToBercail) {
+			if (paths.Count > 0) {
+				if (Vector3.Distance(transform.position, paths[paths.Count - 1]) > .1f) {
+					moveTo(paths[paths.Count - 1]);
+					transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - paths[paths.Count - 1]);
+				} else {
+					paths.RemoveAt(paths.Count - 1);
+				}
+			} else {
+				nextTime = 0.0f;
+				hasMoved = false;
+				speed /= 2.0f;
+				chasing = false;
+				lastTimeKnown = -1.0f;
+				isGoingToBercail = false;
+			}
+		}
+
 		// Chase mode active, IA gonna search the human at all costs.
 		if (chasing) {
 			hasMoved = true;
@@ -90,7 +114,7 @@ public class IaManager : MonoBehaviour {
 				alert.color = Color.white;
 			} else {
 				// On l'a pas eu, mais on va a la derniere position pour checker
-				if (Vector3.Distance(transform.position, pos) > .01f) {
+				if (Vector3.Distance(transform.position, pos) > .1f) {
 					moveTo(pos);
 					transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - pos);
 					isWalking = true;
@@ -109,15 +133,23 @@ public class IaManager : MonoBehaviour {
 			}
 		}
 
-		// Apres 10secs on arrete de chercher comme des fous.
-		if (lastTimeKnown != -1.0f && Time.time - lastTimeKnown > 10.0f) {
-			chasing = false;
-			hasMoved = true;
-			isLooking = false;
-			alert.color = Color.clear;
+		if (!isGoingToBercail && isWalking && chasing && Time.time > nextTime) {
+			paths.Add(transform.position);
+			nextTime += 1.0f;
 		}
 
-		if (!chasing && hasCheckPoints && !hasMoved) {
+		// Apres 10secs on arrete de chercher comme des fous.
+		if (!isGoingToBercail && lastTimeKnown != -1.0f && Time.time - lastTimeKnown > 10.0f) {
+			chasing = false;
+			isLooking = false;
+			alert.color = Color.clear;
+			if (!isGoingToBercail) {
+				speed *= 2.0f;	
+			}
+			isGoingToBercail = true;
+		}
+
+		if (!chasing && hasCheckPoints && !hasMoved && !isGoingToBercail) {
 
 			Vector3 targetPosition = checkPoint ? checkPoint.GetComponent<Transform>().position : initPosition;
 
