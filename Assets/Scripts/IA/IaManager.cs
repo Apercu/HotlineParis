@@ -198,27 +198,4 @@ public class IaManager : MonoBehaviour {
 			hasPlayerInSight = false;
 		}
 	}
-
-	/*
-
-
-	void Update ()
-	{
-		// If the last global sighting of the player has changed...
-		if (lastPlayerSighting.position != previousSighting)
-			// ... then update the personal sighting to be the same as the global sighting.
-			personalLastSighting = lastPlayerSighting.position;
-		
-		// Set the previous sighting to the be the sighting from this frame.
-		previousSighting = lastPlayerSighting.position;
-		
-		// If the player is alive...
-		if(playerHealth.health > 0f)
-			// ... set the animator parameter to whether the player is in sight or not.
-			anim.SetBool(hash.playerInSightBool, playerInSight);
-		else
-			// ... set the animator parameter to false.
-			anim.SetBool(hash.playerInSightBool, false);
-	}
-	*/
 }
