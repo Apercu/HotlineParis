@@ -27,7 +27,7 @@ public class PlayerManager : MonoBehaviour {
 		Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - mouse);
 
-		if (Input.GetKeyDown (KeyCode.E) && weaponHovered) {
+		if (Input.GetKeyDown (KeyCode.E) && weaponHovered && weapon == null) {
 			PickWeapon ();
 		}
 
@@ -36,7 +36,7 @@ public class PlayerManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonDown (0) && weapon) {
-			weapon.GetComponent<Weapon> ().Shoot();
+			weapon.GetComponent<Weapon> ().Shoot(gameObject);
 		}
 	}
 
