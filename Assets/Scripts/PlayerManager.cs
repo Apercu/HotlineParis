@@ -12,6 +12,12 @@ public class PlayerManager : MonoBehaviour {
 
 	public float speed = 8.0f;
 
+	public static PlayerManager instance { get; private set; }
+
+	void Awake () {
+		instance = this;
+	}
+
 	void Start () {
 		legs = gameObject.transform.FindChild("legs").GetComponent<Animator>();
 		rbody = gameObject.GetComponent<Rigidbody2D>();
@@ -44,7 +50,8 @@ public class PlayerManager : MonoBehaviour {
 		weapon = Instantiate(weaponHovered, gunHolder.transform.position, transform.rotation) as GameObject;
 		weapon.GetComponent<Rigidbody2D>().isKinematic = true;
 		weapon.transform.SetParent(gunHolder.transform);
-		weapon.GetComponent<Weapon> ().AttachToBody ();
+		weapon.GetComponent<Weapon>().AttachToBody();
+		weapon.tag = "Player";
 		Destroy (weaponHovered);
 	}
 
@@ -55,7 +62,8 @@ public class PlayerManager : MonoBehaviour {
 		Rigidbody2D rb = go.GetComponent<Rigidbody2D> ();
 
 		Destroy (weapon);
-		go.GetComponent<Weapon> ().Drop ();
+		go.GetComponent<Weapon>().Drop();
+		go.tag = "Weapon";
 		rb.isKinematic = false;
 		go.GetComponent<BoxCollider2D> ().isTrigger = false;
 		rb.AddForce ((mouse - transform.position) * 8, ForceMode2D.Impulse);
