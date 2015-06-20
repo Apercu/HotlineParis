@@ -174,7 +174,7 @@ public class IaManager : MonoBehaviour {
 		head.SetBool("isLooking", isLooking);
 	}
 
-	void OnTriggerEnter2D (Collider2D obj) {
+	void OnTriggerStay2D (Collider2D obj) {
 		if (obj.tag == "Player") {
 			hasPlayerInSight = false;
 
