@@ -5,8 +5,10 @@ public class PlayerManager : MonoBehaviour {
 
 	private Animator legs;
 	private Rigidbody2D rbody;
+	private Vector3 acceleration = Vector3.zero;
+	private bool isMoving = false;
 
-	public float speed = 100.0f;
+	public float speed = 8.0f;
 
 	void Start () {
 		legs = gameObject.transform.FindChild("legs").GetComponent<Animator>();
@@ -14,18 +16,17 @@ public class PlayerManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) {
-			rbody.AddForce(Vector3.up * speed);
+		acceleration += Vector3.up * Input.GetAxis("Vertical");
+		acceleration += Vector3.right * Input.GetAxis("Horizontal");
+		isMoving = (Input.GetAxis ("Horizontal") != 0 || Input.GetAxis("Vertical") != 0);
 
-		}
-		if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) {
-			rbody.AddForce(Vector3.left * speed);
-		}
-		if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) {
-			rbody.AddForce(Vector3.down * speed);
-		}
-		if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) {
-			rbody.AddForce(Vector3.right * speed);
-		}
+		legs.SetBool("isWalking", (rbody.velocity.magnitude > 0.0f));
+	}
+
+	void FixedUpdate () {
+		Vector3.Normalize(acceleration);
+		acceleration *= speed;
+		rbody.velocity = acceleration;
+		acceleration = Vector3.zero;
 	}
 }
