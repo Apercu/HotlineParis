@@ -50,7 +50,10 @@ public class IaManager : MonoBehaviour {
 
 		if (chasing) {
 			transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - playerPosition);
-			moveTo(playerPosition != Vector3.zero ? playerPosition : lastKnowPosition);
+			Vector3 pos = playerPosition != Vector3.zero ? playerPosition : lastKnowPosition;
+			if (Vector3.Distance(transform.position, pos) > .1f) {
+				moveTo (pos);
+			}
 		}
 
 		if (!chasing && hasCheckPoints) {
@@ -88,9 +91,9 @@ public class IaManager : MonoBehaviour {
 			if (hit.collider.tag == "Player") {
 				hasPlayerInSight = true;
 				playerPosition = obj.transform.position;
+				lastKnowPosition = playerPosition;
 				chasing = true;
 			} else {
-				lastKnowPosition = playerPosition;
 				playerPosition = Vector3.zero;
 			}
 		}
