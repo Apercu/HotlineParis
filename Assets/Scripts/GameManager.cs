@@ -7,8 +7,10 @@ public class GameManager : MonoBehaviour {
 	public Texture2D cursor;
 	public List<IaManager> ennemies;
 	public CanvasGroup diedUi;
-
+	public CanvasGroup winUi;
+	
 	[HideInInspector] public bool isDead = false;
+	[HideInInspector] public bool hasWon = false;
 
 	public static GameManager instance { get; private set; }
 	
@@ -25,7 +27,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void win () {
-
+		hasWon = true;
 	}
 
 	public void killEnnemy (IaManager ennemy) {
@@ -41,6 +43,7 @@ public class GameManager : MonoBehaviour {
 
 	void Update () {
 		diedUi.alpha = isDead ? 1 : 0;
+		winUi.alpha = hasWon ? 1 : 0;
 		if (Input.GetKeyDown(KeyCode.R)) {
 			Application.LoadLevel(Application.loadedLevel);
 		}

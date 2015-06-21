@@ -28,6 +28,7 @@ public class IaManager : MonoBehaviour {
 	private Vector3 lastKnowPosition;
 	private float lastTimeKnown = -1.0f;
 
+	private Coroutine shootRoutine;
 	private Coroutine blinkRoutine;
 	private ParticleSystem blood;
 	private Animator legs;
@@ -96,7 +97,7 @@ public class IaManager : MonoBehaviour {
 		GameObject go = Instantiate(currentWeapon.ammo, transform.position, transform.rotation * Quaternion.Euler(0, 0, 270)) as GameObject;
 		go.GetComponent<Ammo>().ignoreEnnemies = true;
 		Physics2D.IgnoreCollision(this.GetComponent<Collider2D>(), go.GetComponent<Collider2D>());
-		Destroy (go, 10);
+		Destroy (go, go.GetComponent<Ammo>().isKnife ? 0.1f : 10.0f);
 	}
 
 	IEnumerator startBlood () {
@@ -177,7 +178,9 @@ public class IaManager : MonoBehaviour {
 
 			// On a retrouve le player
 			if (hit.collider.tag == "Player") {
-				if (Vector3.Distance(transform.position, vectorPlayer) > 2f) {
+				bool hasKnife = currentWeapon.GetComponent<Weapon>().isKnife;
+				if (!hasKnife && Vector3.Distance(transform.position, vectorPlayer) > 2f
+				    || hasKnife && Vector3.Distance(transform.position, vectorPlayer) > 0.5f) {
 					moveTo(vectorPlayer);
 					isWalking = true;
 				}
@@ -260,7 +263,6 @@ public class IaManager : MonoBehaviour {
 
 	void OnTriggerStay2D (Collider2D obj) {
 		if (!isGoingToBercail && obj.tag == "Player") {
-			hasPlayerInSight = false;
 
 			Vector3 dir = obj.transform.position - transform.position;
 
@@ -269,6 +271,8 @@ public class IaManager : MonoBehaviour {
 				hasPlayerInSight = true;
 				lastKnowPosition = obj.transform.position;
 				chasing = true;
+			} else {
+				hasPlayerInSight = false;
 			}
 		}
 	}
