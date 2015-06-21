@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	public List<IaManager> ennemies;
 	public CanvasGroup diedUi;
 	public CanvasGroup winUi;
+	public CanvasGroup cheatUi;
 	public AudioSource musicAudio;
 	public AudioSource winAudio;
 	public AudioSource loseAudio;
@@ -52,11 +53,22 @@ public class GameManager : MonoBehaviour {
 		isDead = true;
 	}
 
+	IEnumerator quitCheat () {
+		yield return new WaitForSeconds(2);
+		Application.Quit();
+	}
+
 	void Update () {
 		diedUi.alpha = isDead ? 1 : 0;
 		winUi.alpha = hasWon ? 1 : 0;
-		if (Input.GetKeyDown(KeyCode.R) && PlayerManager.instance.hasMoved) {
-			Application.LoadLevel(Application.loadedLevel);
+		if (Input.GetKeyDown(KeyCode.R)) {
+			if (PlayerManager.instance.hasMoved) {
+				Application.LoadLevel(Application.loadedLevel);
+			} else {
+				cheatUi.alpha = 1;
+				Time.timeScale = 0;
+				StartCoroutine(quitCheat());
+			}
 		}
 	}
 }
