@@ -35,7 +35,6 @@ public class IaManager : MonoBehaviour {
 	private Coroutine blinkRoutine;
 	private ParticleSystem blood;
 	private Animator legs;
-	private Animator head;
 	private Animator body;
 	private SpriteRenderer alert;
 	private List<Vector3> paths = new List<Vector3>();
@@ -58,7 +57,6 @@ public class IaManager : MonoBehaviour {
 
 		legs = transform.FindChild("legs").GetComponent<Animator>();
 		body = GetComponent<Animator>();
-		head = transform.FindChild("head").GetComponent<Animator>();
 		alert = transform.FindChild("alert").GetComponent<SpriteRenderer>();
 		blood = GetComponent<ParticleSystem> ();
 
@@ -84,7 +82,7 @@ public class IaManager : MonoBehaviour {
 
 		body.SetBool("isDead", true);
 		legs.SetBool("isWalking", false);
-		head.SetBool("isLooking", false);
+		body.SetBool("isLooking", false);
 		dieAudio.Play ();
 		blood.Play ();
 		gameObject.layer = 11;
@@ -103,6 +101,7 @@ public class IaManager : MonoBehaviour {
 	}
 
 	IEnumerator doStun () {
+		isLooking = false;
 		body.SetBool("isStun", true);
 		yield return new WaitForSeconds(3);
 		body.SetBool("isStun", false);
@@ -141,6 +140,7 @@ public class IaManager : MonoBehaviour {
 			alert.color = Color.clear;
 			yield return new WaitForSeconds(0.5f);
 		}
+		isLooking = false;
 	}
 
 	void Update () {
@@ -283,7 +283,7 @@ public class IaManager : MonoBehaviour {
 		}
 
 		legs.SetBool("isWalking", isWalking);
-		head.SetBool("isLooking", isLooking);
+		body.SetBool("isLooking", isLooking);
 	}
 
 	void OnTriggerStay2D (Collider2D obj) {
