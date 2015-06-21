@@ -28,6 +28,7 @@ public class IaManager : MonoBehaviour {
 	private List<Vector3> paths = new List<Vector3>();
 
 	private float nextTime = 0.0f;
+	private int layerWithoutEnnemies = 1 << 12;
 
 	void Start () {
 
@@ -36,6 +37,8 @@ public class IaManager : MonoBehaviour {
 			firstCheckPoint = checkPoint;
 			hasCheckPoints = true;
 		}
+
+		layerWithoutEnnemies = ~layerWithoutEnnemies;
 		
 		legs = transform.FindChild("legs").GetComponent<Animator>();
 		head = transform.FindChild("head").GetComponent<Animator>();
@@ -73,7 +76,16 @@ public class IaManager : MonoBehaviour {
 
 		// Get to the bercail
 		if (isGoingToBercail) {
+			// Si il nous reste des paths pour revenir
 			if (paths.Count > 0) {
+
+				if (paths.Count > 1) {
+					// Si ca raycast avec notre origine on vire tout et on y va direct
+					if (!Physics2D.Linecast(transform.position, paths[0], layerWithoutEnnemies)) {
+						paths.RemoveRange(1, paths.Count - 1);
+					}
+				}
+
 				if (Vector3.Distance(transform.position, paths[paths.Count - 1]) > .1f) {
 					moveTo(paths[paths.Count - 1]);
 					transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - paths[paths.Count - 1]);
@@ -81,6 +93,7 @@ public class IaManager : MonoBehaviour {
 					paths.RemoveAt(paths.Count - 1);
 				}
 			} else {
+				// Sinon on a fini de retourner a la position originelle
 				nextTime = 0.0f;
 				hasMoved = false;
 				speed /= 2.0f;
@@ -94,14 +107,11 @@ public class IaManager : MonoBehaviour {
 		if (chasing) {
 			hasMoved = true;
 			Vector3 pos = lastKnowPosition;
-				
-			int layerMask = 1 << 12;
-			layerMask = ~layerMask;
 
 			Vector3 vectorPlayer = PlayerManager.instance.transform.position;
 			Vector3 dir = vectorPlayer - transform.position;
 
-			RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, Mathf.Infinity, layerMask);
+			RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, Mathf.Infinity, layerWithoutEnnemies);
 
 			// On a retrouve le player
 			if (hit.collider.tag == "Player") {
@@ -133,6 +143,7 @@ public class IaManager : MonoBehaviour {
 			}
 		}
 
+		// Pendant une chase toute les secondes on ajoute la position dans la liste
 		if (!isGoingToBercail && isWalking && chasing && Time.time > nextTime) {
 			paths.Add(transform.position);
 			nextTime += 1.0f;
@@ -149,6 +160,7 @@ public class IaManager : MonoBehaviour {
 			isGoingToBercail = true;
 		}
 
+		// Suit ses checkPoints
 		if (!chasing && hasCheckPoints && !hasMoved && !isGoingToBercail) {
 
 			Vector3 targetPosition = checkPoint ? checkPoint.GetComponent<Transform>().position : initPosition;
@@ -175,15 +187,12 @@ public class IaManager : MonoBehaviour {
 	}
 
 	void OnTriggerStay2D (Collider2D obj) {
-		if (obj.tag == "Player") {
+		if (!chasing && !isGoingToBercail && obj.tag == "Player") {
 			hasPlayerInSight = false;
-
-			int layerMask = 1 << 12;
-			layerMask = ~layerMask;
 
 			Vector3 dir = obj.transform.position - transform.position;
 
-			RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, Mathf.Infinity, layerMask);
+			RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, Mathf.Infinity, layerWithoutEnnemies);
 			if (hit.collider.tag == "Player") {
 				hasPlayerInSight = true;
 				lastKnowPosition = obj.transform.position;
