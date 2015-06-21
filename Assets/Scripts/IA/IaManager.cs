@@ -99,6 +99,16 @@ public class IaManager : MonoBehaviour {
 		StartCoroutine(pauseBlood());
 	}
 
+	public void stun () {
+		StartCoroutine (doStun());
+	}
+
+	IEnumerator doStun () {
+		body.SetBool("isStun", true);
+		yield return new WaitForSeconds(3);
+		body.SetBool("isStun", false);
+	}
+
 	void shoot () {
 		GameObject go = Instantiate(currentWeapon.ammo, transform.position, transform.rotation * Quaternion.Euler(0, 0, 270)) as GameObject;
 		go.GetComponent<Ammo>().ignoreEnnemies = true;
@@ -136,7 +146,7 @@ public class IaManager : MonoBehaviour {
 
 	void Update () {
 
-		if (body.GetBool("isDead") || GameManager.instance.isDead) {
+		if (body.GetBool("isStun") || body.GetBool("isDead") || GameManager.instance.isDead) {
 			legs.SetBool("isWalking", false);
 			return ;
 		}

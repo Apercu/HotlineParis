@@ -17,9 +17,9 @@ public class Weapon : MonoBehaviour {
 	public float fireRate;
 
 	void Awake () {
-		rbody = GetComponent<Rigidbody2D> ();
-		boxCollider = GetComponent<BoxCollider2D> ();
-		spriteRenderer = GetComponent<SpriteRenderer> ();
+		rbody = GetComponent<Rigidbody2D>();
+		boxCollider = GetComponent<BoxCollider2D>();
+		spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 
 	void Update () {
@@ -47,6 +47,16 @@ public class Weapon : MonoBehaviour {
 			Destroy (go, isKnife ? 0.1f : 10.0f);
 			if (!isKnife) {
 				loader--;
+			}
+		}
+	}
+
+	void OnCollisionEnter2D (Collision2D obj) {
+		if (obj.gameObject.tag == "Ennemy") {
+			if (isKnife) {
+				obj.gameObject.GetComponent<IaManager>().die();
+			} else {
+				obj.gameObject.GetComponent<IaManager>().stun();
 			}
 		}
 	}
