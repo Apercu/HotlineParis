@@ -66,7 +66,6 @@ public class GameManager : MonoBehaviour {
 				Application.LoadLevel(Application.loadedLevel);
 			} else {
 				cheatUi.alpha = 1;
-				Time.timeScale = 0;
 				StartCoroutine(quitCheat());
 			}
 		}
