@@ -28,6 +28,7 @@ public class IaManager : MonoBehaviour {
 	private Vector3 lastKnowPosition;
 	private float lastTimeKnown = -1.0f;
 
+	private Coroutine blinkRoutine;
 	private ParticleSystem blood;
 	private Animator legs;
 	private Animator head;
@@ -37,7 +38,7 @@ public class IaManager : MonoBehaviour {
 
 	private float nextTime = 0.0f;
 	private float shootTime = 0.0f;
-	private int layerWithoutEnnemies = ~((1 << 12) | (1 << 10));
+	private int layerWithoutEnnemies = ~((1 << 12) | (1 << 10) | (1 << 11));
 
 	void Start () {
 
@@ -85,12 +86,14 @@ public class IaManager : MonoBehaviour {
 		gameObject.transform.FindChild("legs").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
 		gameObject.transform.FindChild("alert").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
 		GameManager.instance.killEnnemy(this);
+		holder.GetComponent<SpriteRenderer>().enabled = false;
 		//StartCoroutine(startBlood());
 		StartCoroutine(pauseBlood());
 	}
 
 	void shoot () {
 		GameObject go = Instantiate(currentWeapon.ammo, transform.position, transform.rotation * Quaternion.Euler(0, 0, 270)) as GameObject;
+		go.GetComponent<Ammo>().ignoreEnnemies = true;
 		Physics2D.IgnoreCollision(this.GetComponent<Collider2D>(), go.GetComponent<Collider2D>());
 		Destroy (go, 10);
 	}
@@ -147,6 +150,7 @@ public class IaManager : MonoBehaviour {
 				} else {
 					paths.RemoveAt(paths.Count - 1);
 				}
+
 			} else {
 				// Sinon on a fini de retourner a la position originelle
 				nextTime = 0.0f;
@@ -195,7 +199,10 @@ public class IaManager : MonoBehaviour {
 					isLooking = true;
 					if (lastTimeKnown == -1.0f) {
 						lastTimeKnown = Time.time;
-						StartCoroutine(blinkAlert());
+						if (blinkRoutine != null) {
+							StopCoroutine(blinkRoutine);
+						}
+						blinkRoutine =  StartCoroutine(blinkAlert());
 					}
 				}
 			}

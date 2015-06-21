@@ -8,6 +8,8 @@ public class Ammo : MonoBehaviour {
 
 	private Rigidbody2D rbody;
 
+	[HideInInspector]public bool ignoreEnnemies = false;
+
 	void Start () {
 		rbody = GetComponent<Rigidbody2D> ();
 	}
@@ -26,7 +28,7 @@ public class Ammo : MonoBehaviour {
 	void OnCollisionEnter2D (Collision2D obj) {
 		if (obj.collider.tag == "Player") {
 			obj.collider.GetComponent<PlayerManager>().Die();
-		} else if (obj.collider.tag == "Ennemy") {
+		} else if (obj.collider.tag == "Ennemy" && !ignoreEnnemies) {
 			obj.collider.GetComponent<IaManager>().die();
 		}
 		Destroy (gameObject);
