@@ -93,6 +93,7 @@ public class IaManager : MonoBehaviour {
 		Destroy(GetComponent<Collider2D>());
 		GameManager.instance.killEnnemy(this);
 		holder.GetComponent<SpriteRenderer>().enabled = false;
+		Instantiate(currentWeapon, transform.position, Quaternion.identity);
 		StartCoroutine(pauseBlood());
 	}
 
