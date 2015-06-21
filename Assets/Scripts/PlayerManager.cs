@@ -9,6 +9,8 @@ public class PlayerManager : MonoBehaviour {
 	private GameObject weaponHovered;
 	private GameObject weapon;
 	private GameObject gunHolder;
+	private ParticleSystem blood;
+	private Animator anim;
 
 	public float speed = 8.0f;
 
@@ -22,6 +24,9 @@ public class PlayerManager : MonoBehaviour {
 		legs = gameObject.transform.FindChild("legs").GetComponent<Animator>();
 		rbody = gameObject.GetComponent<Rigidbody2D>();
 		gunHolder = transform.FindChild("gunHolder").gameObject;
+		
+		blood = GetComponent<ParticleSystem>();
+		anim = GetComponent<Animator>();
 	}
 
 	void Update () {
@@ -68,6 +73,17 @@ public class PlayerManager : MonoBehaviour {
 		go.GetComponent<BoxCollider2D> ().isTrigger = false;
 		rb.AddForce ((mouse - transform.position) * 8, ForceMode2D.Impulse);
 		rb.AddTorque (5.0f, ForceMode2D.Impulse);
+	}
+
+	public void Die () {
+		anim.SetBool("isDead", true);
+		StartCoroutine(pauseBlood());
+		GameManager.instance.gameOver();
+	}
+	
+	IEnumerator pauseBlood () {
+		yield return new WaitForSeconds(0.6f);
+		blood.Pause();
 	}
 
 	void FixedUpdate () {

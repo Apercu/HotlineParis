@@ -20,11 +20,12 @@ public class IaManager : MonoBehaviour {
 	private bool hasPlayerInSight = false;
 	private Vector3 lastKnowPosition;
 	private float lastTimeKnown = -1.0f;
-	
+
+	private ParticleSystem blood;
 	private Animator legs;
 	private Animator head;
+	private Animator body;
 	private SpriteRenderer alert;
-	private PolygonCollider2D sightCollider;
 	private List<Vector3> paths = new List<Vector3>();
 
 	private float nextTime = 0.0f;
@@ -39,10 +40,11 @@ public class IaManager : MonoBehaviour {
 		}
 		
 		legs = transform.FindChild("legs").GetComponent<Animator>();
+		body = GetComponent<Animator>();
 		head = transform.FindChild("head").GetComponent<Animator>();
 		alert = transform.FindChild("alert").GetComponent<SpriteRenderer>();
+		blood = GetComponent<ParticleSystem> ();
 
-		sightCollider = GetComponent<PolygonCollider2D>();
 		initPosition = transform.position;
 		isWalking = hasCheckPoints;
 	}
@@ -58,6 +60,37 @@ public class IaManager : MonoBehaviour {
 			(directionOfTravel.z * speed * Time.deltaTime), Space.World);
 	}
 
+	public void die () {
+		body.SetBool("isDead", true);
+		legs.SetBool("isWalking", false);
+		head.SetBool("isLooking", false);
+		blood.Play ();
+		gameObject.layer = 11;
+		gameObject.transform.FindChild("body").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
+		gameObject.transform.FindChild("head").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
+		gameObject.transform.FindChild("legs").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
+		gameObject.transform.FindChild("alert").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
+		GameManager.instance.killEnnemy();
+		//StartCoroutine(startBlood());
+		StartCoroutine(pauseBlood());
+	}
+
+	IEnumerator startBlood () {
+		yield return new WaitForSeconds (0.001f);
+		ParticleSystem.Particle[] particles = new ParticleSystem.Particle[blood.maxParticles];
+		int bloodLength = blood.GetParticles (particles); 
+		Debug.Log (bloodLength + " " + blood.maxParticles);
+		for (int i = 0; i < bloodLength; ++i) {
+			particles[i].velocity += Vector3.up * 100000.01f;
+		}
+		blood.SetParticles (particles, bloodLength);
+	}
+
+	IEnumerator pauseBlood () {
+		yield return new WaitForSeconds(0.6f);
+		blood.Pause();
+	}
+
 	IEnumerator blinkAlert () {
 		yield return new WaitForSeconds(6);
 		for (int i = 0; i < 4; ++i) {
@@ -69,6 +102,11 @@ public class IaManager : MonoBehaviour {
 	}
 
 	void Update () {
+
+		if (body.GetBool("isDead")) {
+
+			return ;
+		}
 
 		isWalking = false;
 

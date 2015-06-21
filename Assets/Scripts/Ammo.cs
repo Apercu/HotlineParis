@@ -23,7 +23,12 @@ public class Ammo : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter2D(Collision2D obj) {
+	void OnCollisionEnter2D (Collision2D obj) {
+		if (obj.collider.tag == "Player") {
+			obj.collider.GetComponent<PlayerManager>().Die();
+		} else if (obj.collider.tag == "Ennemy") {
+			obj.collider.GetComponent<IaManager>().die();
+		}
 		Destroy (gameObject);
 	}
 }
