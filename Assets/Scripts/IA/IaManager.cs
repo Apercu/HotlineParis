@@ -126,7 +126,8 @@ public class IaManager : MonoBehaviour {
 
 	void Update () {
 
-		if (body.GetBool("isDead")) {
+		if (body.GetBool("isDead") || GameManager.instance.isDead) {
+			legs.SetBool("isWalking", false);
 			return ;
 		}
 

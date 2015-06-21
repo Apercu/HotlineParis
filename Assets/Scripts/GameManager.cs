@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour {
 
 	public Texture2D cursor;
 	public List<IaManager> ennemies;
+	public CanvasGroup diedUi;
+
+	[HideInInspector] public bool isDead = false;
 
 	public static GameManager instance { get; private set; }
 	
@@ -21,20 +24,25 @@ public class GameManager : MonoBehaviour {
 		ennemies.Add(ennemy);
 	}
 
+	public void win () {
+
+	}
+
 	public void killEnnemy (IaManager ennemy) {
 		ennemies.Remove(ennemy);
 		if (ennemies.Count == 0) {
-			// TODO GAME END
-			Debug.Log ("WIN");
+			win();
 		}
 	}
 
 	public void gameOver () {
-		// TODO
-		Debug.Log("Game over");
+		isDead = true;
 	}
 
 	void Update () {
-	
+		diedUi.alpha = isDead ? 1 : 0;
+		if (Input.GetKeyDown(KeyCode.R) && isDead) {
+			Application.LoadLevel(Application.loadedLevel);
+		}
 	}
 }

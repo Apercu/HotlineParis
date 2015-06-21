@@ -23,6 +23,7 @@ public class PlayerManager : MonoBehaviour {
 	void Start () {
 		legs = gameObject.transform.FindChild("legs").GetComponent<Animator>();
 		rbody = gameObject.GetComponent<Rigidbody2D>();
+
 		gunHolder = transform.FindChild("gunHolder").gameObject;
 		
 		blood = GetComponent<ParticleSystem>();
@@ -30,6 +31,11 @@ public class PlayerManager : MonoBehaviour {
 	}
 
 	void Update () {
+
+		if (GameManager.instance.isDead) {
+			legs.SetBool("isWalking", false);
+			return ;
+		}
 
 		acceleration = Vector3.up * Input.GetAxis("Vertical") + Vector3.right * Input.GetAxis("Horizontal");
 
@@ -77,7 +83,9 @@ public class PlayerManager : MonoBehaviour {
 
 	public void Die () {
 		anim.SetBool("isDead", true);
+		blood.Play();
 		StartCoroutine(pauseBlood());
+		Destroy (weapon);
 		GameManager.instance.gameOver();
 	}
 	
@@ -98,6 +106,9 @@ public class PlayerManager : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D obj) {
 		if (obj.tag == "Weapon") {
 			weaponHovered = obj.gameObject;
+		}
+		if (obj.tag == "Finish") {
+			GameManager.instance.win();
 		}
 	}
 	
