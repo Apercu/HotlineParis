@@ -13,6 +13,7 @@ public class PlayerManager : MonoBehaviour {
 	private ParticleSystem blood;
 	private Animator anim;
 	private float nextShoot = 0.0f;
+	[HideInInspector] public bool hasMoved = false;
 
 	public CanvasGroup guy;
 	public AudioSource dieAudio;
@@ -116,6 +117,9 @@ public class PlayerManager : MonoBehaviour {
 
 	void FixedUpdate () {
 
+		if (acceleration != Vector3.zero) {
+			hasMoved = true;
+		}
 		Vector3.Normalize(acceleration);
 		acceleration *= speed;
 		rbody.velocity = acceleration;

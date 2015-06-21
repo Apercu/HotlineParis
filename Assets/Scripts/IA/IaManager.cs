@@ -42,7 +42,6 @@ public class IaManager : MonoBehaviour {
 
 	private float nextTime = 0.0f;
 	private float shootTime = 0.0f;
-	private float findTime;
 	private int layerWithoutEnnemies = ~((1 << 12) | (1 << 10) | (1 << 11));
 
 	void Start () {
@@ -300,12 +299,6 @@ public class IaManager : MonoBehaviour {
 			} else {
 				hasPlayerInSight = false;
 			}
-		}
-	}
-
-	void OnTriggerEnter2D (Collider2D obj) {
-		if (!isGoingToBercail && obj.tag == "Player") {
-			findTime = Time.time;
 		}
 	}
 

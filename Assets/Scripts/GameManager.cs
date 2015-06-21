@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		diedUi.alpha = isDead ? 1 : 0;
 		winUi.alpha = hasWon ? 1 : 0;
-		if (Input.GetKeyDown(KeyCode.R)) {
+		if (Input.GetKeyDown(KeyCode.R) && PlayerManager.instance.hasMoved) {
 			Application.LoadLevel(Application.loadedLevel);
 		}
 	}
