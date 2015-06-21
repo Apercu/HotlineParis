@@ -80,6 +80,9 @@ public class IaManager : MonoBehaviour {
 	}
 
 	public void die () {
+		if (body.GetBool("isDead")) {
+			return ;
+		}
 		body.SetBool("isDead", true);
 		legs.SetBool("isWalking", false);
 		head.SetBool("isLooking", false);
@@ -90,6 +93,7 @@ public class IaManager : MonoBehaviour {
 		gameObject.transform.FindChild("head").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
 		gameObject.transform.FindChild("legs").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
 		gameObject.transform.FindChild("alert").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
+		Destroy(GetComponent<Collider2D>());
 		GameManager.instance.killEnnemy(this);
 		holder.GetComponent<SpriteRenderer>().enabled = false;
 		//StartCoroutine(startBlood());
