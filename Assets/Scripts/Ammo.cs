@@ -33,6 +33,9 @@ public class Ammo : MonoBehaviour {
 		} else if (obj.collider.tag == "Ennemy" && !ignoreEnnemies) {
 			obj.collider.GetComponent<IaManager>().die();
 		}
-		Destroy (gameObject);
+
+		if (obj.collider.tag != "Ennemy") {
+			Destroy (gameObject);
+		}
 	}
 }

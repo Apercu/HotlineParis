@@ -30,7 +30,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void win () {
-		winAudio.Play ();
+		if (isDead) {
+			return ;
+		}
+		winAudio.Play();
 		hasWon = true;
 	}
 
@@ -42,6 +45,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void gameOver () {
+		if (hasWon) {
+			return ;
+		}
 		loseAudio.Play ();
 		isDead = true;
 	}

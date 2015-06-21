@@ -8,7 +8,8 @@ public class IaManager : MonoBehaviour {
 	public float viewAngle = 100.0f;
 
 	public AudioSource dieAudio;
-
+	public bool noBalls = false;
+	 
 	// Weapons Handle
 	public List<Weapon> weapons;
 	public float attackSpeed = 1.0f;
@@ -80,23 +81,21 @@ public class IaManager : MonoBehaviour {
 	}
 
 	public void die () {
-		if (body.GetBool("isDead")) {
-			return ;
-		}
+		if (body.GetBool ("isDead")) { return; }
+
 		body.SetBool("isDead", true);
 		legs.SetBool("isWalking", false);
 		head.SetBool("isLooking", false);
 		dieAudio.Play ();
 		blood.Play ();
 		gameObject.layer = 11;
-		gameObject.transform.FindChild("body").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
-		gameObject.transform.FindChild("head").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
-		gameObject.transform.FindChild("legs").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
-		gameObject.transform.FindChild("alert").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
+		gameObject.transform.FindChild("body").GetComponent<SpriteRenderer>().sortingLayerName = "Background"; gameObject.transform.FindChild("body").GetComponent<SpriteRenderer>().sortingOrder = 100;
+		gameObject.transform.FindChild("head").GetComponent<SpriteRenderer>().sortingLayerName = "Background"; gameObject.transform.FindChild("head").GetComponent<SpriteRenderer>().sortingOrder = 100;
+		gameObject.transform.FindChild("legs").GetComponent<SpriteRenderer>().sortingLayerName = "Background"; gameObject.transform.FindChild("legs").GetComponent<SpriteRenderer>().sortingOrder = 100;
+		gameObject.transform.FindChild("alert").GetComponent<SpriteRenderer>().enabled = false;
 		Destroy(GetComponent<Collider2D>());
 		GameManager.instance.killEnnemy(this);
 		holder.GetComponent<SpriteRenderer>().enabled = false;
-		//StartCoroutine(startBlood());
 		StartCoroutine(pauseBlood());
 	}
 
@@ -125,6 +124,7 @@ public class IaManager : MonoBehaviour {
 	}
 
 	IEnumerator blinkAlert () {
+		alert.color = Color.white;
 		yield return new WaitForSeconds(6);
 		for (int i = 0; i < 4; ++i) {
 			alert.color = Color.white;
@@ -174,8 +174,12 @@ public class IaManager : MonoBehaviour {
 			}
 		}
 
+		if (hasPlayerInSight && noBalls) {
+			transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - PlayerManager.instance.transform.position);
+		}
+
 		// Chase mode active, IA gonna search the human at all costs.
-		if (chasing) {
+		if (!noBalls && chasing) {
 			hasMoved = true;
 
 			Vector3 vectorPlayer = PlayerManager.instance.transform.position;
@@ -198,39 +202,40 @@ public class IaManager : MonoBehaviour {
 				alert.color = Color.white;
 			} else {
 				// On l'a pas eu, mais on va a la derniere position pour checker
-				if (Vector3.Distance(transform.position, lastKnowPosition) > 1.0f) {
+				if (lastKnowPosition != Vector3.zero && Vector3.Distance(transform.position, lastKnowPosition) > 1.0f) {
 					moveTo(lastKnowPosition);
 					transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - lastKnowPosition);
 					isWalking = true;
 					isLooking = false;
 					lastTimeKnown = -1.0f;
-					alert.color = Color.white;
 				} else {
 					// Passage en mode recherche
 					isWalking = false;
 					isLooking = true;
+					alert.color = Color.white;
 					if (lastTimeKnown == -1.0f) {
 						lastTimeKnown = Time.time;
 						if (blinkRoutine != null) {
 							StopCoroutine(blinkRoutine);
 						}
-						blinkRoutine =  StartCoroutine(blinkAlert());
+						blinkRoutine = StartCoroutine(blinkAlert());
 					}
 				}
 			}
 		}
 
 		// Pendant une chase toute les secondes on ajoute la position dans la liste
-		if (!isGoingToBercail && isWalking && chasing && Time.time > nextTime) {
+		if (!noBalls && !isGoingToBercail && isWalking && chasing && Time.time > nextTime) {
 			paths.Add(transform.position);
 			nextTime += 1.0f;
 		}
 
 		// Apres 10secs on arrete de chercher comme des fous.
-		if (!isGoingToBercail && lastTimeKnown != -1.0f && Time.time - lastTimeKnown > 10.0f) {
+		if (!noBalls && !isGoingToBercail && lastTimeKnown != -1.0f && Time.time - lastTimeKnown > 10.0f) {
 			chasing = false;
 			isLooking = false;
 			alert.color = Color.clear;
+			lastTimeKnown = -1.0f;
 			if (!isGoingToBercail) {
 				speed *= 2.0f;	
 			}
@@ -261,12 +266,11 @@ public class IaManager : MonoBehaviour {
 		}
 
 		if (hasPlayerInSight && !isGoingToBercail) {
-			if ((shootTime > currentWeapon.GetComponent<Weapon>().fireRate / 2.0f && Time.time - findTime > 0.1f)) {
+			if (shootTime == 0.0f || (shootTime > currentWeapon.GetComponent<Weapon>().fireRate / 2.0f)) {
 				shoot();
+				shootTime = 0.0f;
 			}
 			shootTime += Time.deltaTime;
-		} else {
-			shootTime = 0.0f;
 		}
 
 		legs.SetBool("isWalking", isWalking);

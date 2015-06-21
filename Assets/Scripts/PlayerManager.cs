@@ -84,7 +84,7 @@ public class PlayerManager : MonoBehaviour {
 	}
 
 	void ThrowWeapon () {
-		dropAudio.Play ();
+		dropAudio.Play();
 		Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		Vector3 pos = (mouse - transform.position).normalized;
 		GameObject go = Instantiate (weapon, transform.position + pos, Quaternion.identity) as GameObject;
