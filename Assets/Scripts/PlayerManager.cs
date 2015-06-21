@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour {
 
@@ -12,6 +13,7 @@ public class PlayerManager : MonoBehaviour {
 	private ParticleSystem blood;
 	private Animator anim;
 
+	public CanvasGroup guy;
 	public AudioSource dieAudio;
 	public AudioSource pickAudio;
 	public AudioSource dropAudio;
@@ -28,7 +30,7 @@ public class PlayerManager : MonoBehaviour {
 		rbody = gameObject.GetComponent<Rigidbody2D>();
 
 		gunHolder = transform.FindChild("gunHolder").gameObject;
-		
+
 		blood = GetComponent<ParticleSystem>();
 		anim = GetComponent<Animator>();
 	}
@@ -51,12 +53,13 @@ public class PlayerManager : MonoBehaviour {
 			PickWeapon ();
 		}
 
-		if (Input.GetMouseButtonDown (1) && weapon) {
+		if (Input.GetMouseButtonDown(1) && weapon) {
 			ThrowWeapon ();
 		}
 
-		if (Input.GetMouseButtonDown (0) && weapon) {
+		if (Input.GetMouseButtonDown(0) && weapon) {
 			weapon.GetComponent<Weapon>().Shoot(gameObject, true);
+			guy.transform.FindChild("ammo").GetComponent<Text>().text = weapon.GetComponent<Weapon>().loader.ToString();
 		}
 	}
 
@@ -67,6 +70,9 @@ public class PlayerManager : MonoBehaviour {
 		weapon.transform.SetParent(gunHolder.transform);
 		weapon.GetComponent<Weapon>().AttachToBody();
 		weapon.tag = "Player";
+		guy.alpha = 1;
+		guy.transform.FindChild("name").GetComponent<Text>().text = weapon.GetComponent<Weapon>().theName;
+		guy.transform.FindChild("ammo").GetComponent<Text>().text = weapon.GetComponent<Weapon>().loader.ToString();
 		Destroy (weaponHovered);
 	}
 
@@ -84,6 +90,7 @@ public class PlayerManager : MonoBehaviour {
 		go.GetComponent<BoxCollider2D> ().isTrigger = false;
 		rb.AddForce ((mouse - transform.position) * 8, ForceMode2D.Impulse);
 		rb.AddTorque (5.0f, ForceMode2D.Impulse);
+		guy.alpha = 0;
 	}
 
 	public void Die () {
