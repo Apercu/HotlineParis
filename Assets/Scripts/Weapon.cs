@@ -6,6 +6,7 @@ public class Weapon : MonoBehaviour {
 	private Rigidbody2D rbody;
 	private BoxCollider2D boxCollider;
 	private SpriteRenderer spriteRenderer;
+	private Animator anim;
 
 	public Sprite floored;
 	public Sprite handled;
@@ -20,6 +21,8 @@ public class Weapon : MonoBehaviour {
 		rbody = GetComponent<Rigidbody2D>();
 		boxCollider = GetComponent<BoxCollider2D>();
 		spriteRenderer = GetComponent<SpriteRenderer>();
+		anim = GetComponent<Animator>();
+		anim.SetBool("blink", true);
 	}
 
 	void Update () {
@@ -31,11 +34,13 @@ public class Weapon : MonoBehaviour {
 	public void AttachToBody () {
 		spriteRenderer.sprite = handled;
 		spriteRenderer.sortingLayerName = "Player";
+		anim.SetBool("blink", false);
 	}
 	
 	public void Drop () {
 		spriteRenderer.sprite = floored;
 		spriteRenderer.sortingLayerName = "Objects";
+		anim.SetBool("blink", true);
 	}
 
 	public void Shoot (GameObject shooter, bool isPlayer) {
