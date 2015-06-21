@@ -7,11 +7,15 @@ public class Ammo : MonoBehaviour {
 	public float speed = 500.0f;
 
 	private Rigidbody2D rbody;
-
+	
 	[HideInInspector]public bool ignoreEnnemies = false;
+	[HideInInspector]public bool shotByPlayer = false;
 
 	void Start () {
 		rbody = GetComponent<Rigidbody2D> ();
+		if (shotByPlayer) {
+			gameObject.tag = "AmmoPlayer";
+		}
 	}
 	
 	void Update() {

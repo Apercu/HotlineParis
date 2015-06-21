@@ -23,7 +23,7 @@ public class IaManager : MonoBehaviour {
 
 	private bool isGoingToBercail = false;
 	private bool hasMoved = false;
-	private bool chasing = false;
+	[HideInInspector] public bool chasing = false;
 	private bool hasPlayerInSight = false;
 	private Vector3 lastKnowPosition;
 	private float lastTimeKnown = -1.0f;

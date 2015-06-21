@@ -53,7 +53,7 @@ public class PlayerManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonDown (0) && weapon) {
-			weapon.GetComponent<Weapon> ().Shoot(gameObject);
+			weapon.GetComponent<Weapon>().Shoot(gameObject, true);
 		}
 	}
 

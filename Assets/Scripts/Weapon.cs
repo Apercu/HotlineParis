@@ -34,9 +34,10 @@ public class Weapon : MonoBehaviour {
 		spriteRenderer.sortingLayerName = "Objects";
 	}
 
-	public void Shoot (GameObject shooter) {
+	public void Shoot (GameObject shooter, bool isPlayer) {
 		GameObject go = Instantiate (ammo, transform.position, transform.rotation * Quaternion.Euler(0, 0, 270)) as GameObject;
 		Physics2D.IgnoreCollision(shooter.GetComponent<Collider2D>(), go.GetComponent<Collider2D>());
+		go.GetComponent<Ammo>().shotByPlayer = true;
 		
 		Destroy (go, isKnife ? 0.1f : 10.0f);
 	}
