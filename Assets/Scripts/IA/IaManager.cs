@@ -7,6 +7,8 @@ public class IaManager : MonoBehaviour {
 	public float speed = 3.0f;
 	public float viewAngle = 100.0f;
 
+	public AudioSource dieAudio;
+
 	// Weapons Handle
 	public List<Weapon> weapons;
 	public float attackSpeed = 1.0f;
@@ -81,6 +83,7 @@ public class IaManager : MonoBehaviour {
 		body.SetBool("isDead", true);
 		legs.SetBool("isWalking", false);
 		head.SetBool("isLooking", false);
+		dieAudio.Play ();
 		blood.Play ();
 		gameObject.layer = 11;
 		gameObject.transform.FindChild("body").GetComponent<SpriteRenderer>().sortingLayerName = "Background";
@@ -97,6 +100,7 @@ public class IaManager : MonoBehaviour {
 		GameObject go = Instantiate(currentWeapon.ammo, transform.position, transform.rotation * Quaternion.Euler(0, 0, 270)) as GameObject;
 		go.GetComponent<Ammo>().ignoreEnnemies = true;
 		Physics2D.IgnoreCollision(this.GetComponent<Collider2D>(), go.GetComponent<Collider2D>());
+		AudioSource.PlayClipAtPoint (currentWeapon.shootAudio.clip, transform.position);
 		Destroy (go, go.GetComponent<Ammo>().isKnife ? 0.1f : 10.0f);
 	}
 

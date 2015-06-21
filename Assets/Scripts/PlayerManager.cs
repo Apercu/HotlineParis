@@ -12,6 +12,9 @@ public class PlayerManager : MonoBehaviour {
 	private ParticleSystem blood;
 	private Animator anim;
 
+	public AudioSource dieAudio;
+	public AudioSource pickAudio;
+	public AudioSource dropAudio;
 	public float speed = 8.0f;
 
 	public static PlayerManager instance { get; private set; }
@@ -58,6 +61,7 @@ public class PlayerManager : MonoBehaviour {
 	}
 
 	void PickWeapon () {
+		pickAudio.Play ();
 		weapon = Instantiate(weaponHovered, gunHolder.transform.position, transform.rotation) as GameObject;
 		weapon.GetComponent<Rigidbody2D>().isKinematic = true;
 		weapon.transform.SetParent(gunHolder.transform);
@@ -67,6 +71,7 @@ public class PlayerManager : MonoBehaviour {
 	}
 
 	void ThrowWeapon () {
+		dropAudio.Play ();
 		Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		Vector3 pos = (mouse - transform.position).normalized;
 		GameObject go = Instantiate (weapon, transform.position + pos, Quaternion.identity) as GameObject;
@@ -84,6 +89,7 @@ public class PlayerManager : MonoBehaviour {
 	public void Die () {
 		anim.SetBool("isDead", true);
 		blood.Play();
+		dieAudio.Play ();
 		StartCoroutine(pauseBlood());
 		Destroy (weapon);
 		GameManager.instance.gameOver();

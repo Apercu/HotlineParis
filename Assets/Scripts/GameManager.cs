@@ -8,7 +8,10 @@ public class GameManager : MonoBehaviour {
 	public List<IaManager> ennemies;
 	public CanvasGroup diedUi;
 	public CanvasGroup winUi;
-	
+	public AudioSource musicAudio;
+	public AudioSource winAudio;
+	public AudioSource loseAudio;
+
 	[HideInInspector] public bool isDead = false;
 	[HideInInspector] public bool hasWon = false;
 
@@ -27,6 +30,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void win () {
+		winAudio.Play ();
 		hasWon = true;
 	}
 
@@ -38,6 +42,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void gameOver () {
+		loseAudio.Play ();
 		isDead = true;
 	}
 
