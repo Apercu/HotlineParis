@@ -27,7 +27,7 @@ public class IaManager : MonoBehaviour {
 	private bool hasMoved = false;
 	[HideInInspector] public bool chasing = false;
 	private bool hasPlayerInSight = false;
-	private Vector3 lastKnowPosition;
+	private Vector3 lastKnowPosition = Vector3.zero;
 	private float lastTimeKnown = -1.0f;
 
 	private Coroutine shootRoutine;
@@ -173,7 +173,6 @@ public class IaManager : MonoBehaviour {
 		// Chase mode active, IA gonna search the human at all costs.
 		if (chasing) {
 			hasMoved = true;
-			Vector3 pos = lastKnowPosition;
 
 			Vector3 vectorPlayer = PlayerManager.instance.transform.position;
 			Vector3 dir = vectorPlayer - transform.position;
@@ -195,9 +194,9 @@ public class IaManager : MonoBehaviour {
 				alert.color = Color.white;
 			} else {
 				// On l'a pas eu, mais on va a la derniere position pour checker
-				if (Vector3.Distance(transform.position, pos) > 1.0f) {
-					moveTo(pos);
-					transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - pos);
+				if (Vector3.Distance(transform.position, lastKnowPosition) > 1.0f) {
+					moveTo(lastKnowPosition);
+					transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - lastKnowPosition);
 					isWalking = true;
 					isLooking = false;
 					lastTimeKnown = -1.0f;
@@ -232,6 +231,7 @@ public class IaManager : MonoBehaviour {
 				speed *= 2.0f;	
 			}
 			isGoingToBercail = true;
+			lastKnowPosition = Vector3.zero;
 		}
 
 		// Suit ses checkPoints
