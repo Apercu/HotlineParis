@@ -36,6 +36,7 @@ public class Weapon : MonoBehaviour {
 	public void Shoot (GameObject shooter) {
 		GameObject go = Instantiate (ammo, transform.position, transform.rotation * Quaternion.Euler(0, 0, 270)) as GameObject;
 		Physics2D.IgnoreCollision(shooter.GetComponent<Collider2D>(), go.GetComponent<Collider2D>());
-		Destroy (go, 10);
+		
+		Destroy (go, go.GetComponent<Ammo> ().isKnife ? 0.1f : 10.0f);
 	}
 }

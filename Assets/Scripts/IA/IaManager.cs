@@ -38,6 +38,7 @@ public class IaManager : MonoBehaviour {
 
 	private float nextTime = 0.0f;
 	private float shootTime = 0.0f;
+	private float findTime;
 	private int layerWithoutEnnemies = ~((1 << 12) | (1 << 10) | (1 << 11));
 
 	void Start () {
@@ -176,7 +177,7 @@ public class IaManager : MonoBehaviour {
 
 			// On a retrouve le player
 			if (hit.collider.tag == "Player") {
-				if (Vector3.Distance(transform.position, vectorPlayer) > 0.5f) {
+				if (Vector3.Distance(transform.position, vectorPlayer) > 2f) {
 					moveTo(vectorPlayer);
 					isWalking = true;
 				}
@@ -248,7 +249,7 @@ public class IaManager : MonoBehaviour {
 			isWalking = true;
 		}
 
-		if (hasPlayerInSight && !isGoingToBercail && Time.time > shootTime) {
+		if (hasPlayerInSight && !isGoingToBercail && Time.time > shootTime && Time.time - findTime > 0.5f) {
 			shoot();
 			shootTime += attackSpeed;
 		}
@@ -269,6 +270,12 @@ public class IaManager : MonoBehaviour {
 				lastKnowPosition = obj.transform.position;
 				chasing = true;
 			}
+		}
+	}
+
+	void OnTriggerEnter2D (Collider2D obj) {
+		if (!isGoingToBercail && obj.tag == "Player") {
+			findTime = Time.time;
 		}
 	}
 

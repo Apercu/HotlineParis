@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
 
 	void Update () {
 		diedUi.alpha = isDead ? 1 : 0;
-		if (Input.GetKeyDown(KeyCode.R) && isDead) {
+		if (Input.GetKeyDown(KeyCode.R)) {
 			Application.LoadLevel(Application.loadedLevel);
 		}
 	}

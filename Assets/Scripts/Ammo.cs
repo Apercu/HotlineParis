@@ -20,8 +20,6 @@ public class Ammo : MonoBehaviour {
 	void FixedUpdate() {
 		if (!isKnife) {
 			rbody.velocity = transform.right * Time.deltaTime * speed;
-		} else {
-			Destroy (gameObject);
 		}
 	}
 
