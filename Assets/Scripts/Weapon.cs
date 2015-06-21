@@ -14,6 +14,7 @@ public class Weapon : MonoBehaviour {
 	public bool isKnife = false;
 	public string theName;
 	public int loader;
+	public float fireRate;
 
 	void Awake () {
 		rbody = GetComponent<Rigidbody2D> ();
@@ -38,13 +39,15 @@ public class Weapon : MonoBehaviour {
 	}
 
 	public void Shoot (GameObject shooter, bool isPlayer) {
-		if (!isKnife && loader > 0) {
+		if ((!isKnife && loader > 0) || isKnife) {
 			GameObject go = Instantiate (ammo, transform.position, transform.rotation * Quaternion.Euler(0, 0, 270)) as GameObject;
 			Physics2D.IgnoreCollision(shooter.GetComponent<Collider2D>(), go.GetComponent<Collider2D>());
 			go.GetComponent<Ammo>().shotByPlayer = true;
 			shootAudio.Play ();
 			Destroy (go, isKnife ? 0.1f : 10.0f);
-			loader--;
+			if (!isKnife) {
+				loader--;
+			}
 		}
 	}
 }

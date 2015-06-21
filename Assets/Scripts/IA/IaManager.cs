@@ -256,9 +256,13 @@ public class IaManager : MonoBehaviour {
 			isWalking = true;
 		}
 
-		if (hasPlayerInSight && !isGoingToBercail && Time.time > shootTime && Time.time - findTime > 0.5f) {
-			shoot();
-			shootTime += attackSpeed;
+		if (hasPlayerInSight && !isGoingToBercail) {
+			if ((shootTime > currentWeapon.GetComponent<Weapon>().fireRate / 2.0f && Time.time - findTime > 0.1f)) {
+				shoot();
+			}
+			shootTime += Time.deltaTime;
+		} else {
+			shootTime = 0.0f;
 		}
 
 		legs.SetBool("isWalking", isWalking);

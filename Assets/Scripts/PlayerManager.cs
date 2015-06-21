@@ -12,6 +12,7 @@ public class PlayerManager : MonoBehaviour {
 	private GameObject gunHolder;
 	private ParticleSystem blood;
 	private Animator anim;
+	private float nextShoot = 0.0f;
 
 	public CanvasGroup guy;
 	public AudioSource dieAudio;
@@ -57,9 +58,15 @@ public class PlayerManager : MonoBehaviour {
 			ThrowWeapon ();
 		}
 
-		if (Input.GetMouseButtonDown(0) && weapon) {
-			weapon.GetComponent<Weapon>().Shoot(gameObject, true);
-			guy.transform.FindChild("ammo").GetComponent<Text>().text = weapon.GetComponent<Weapon>().loader.ToString();
+		if (Input.GetMouseButton (0) && weapon) {
+			if (nextShoot == 0.0f || nextShoot > weapon.GetComponent<Weapon>().fireRate) {
+				weapon.GetComponent<Weapon> ().Shoot (gameObject, true);
+				guy.transform.FindChild ("ammo").GetComponent<Text> ().text = weapon.GetComponent<Weapon> ().loader.ToString ();
+				nextShoot = 0.0f;
+			}
+			nextShoot += Time.deltaTime;
+		} else if (!Input.GetMouseButton(0)) {
+			nextShoot = 0.0f;
 		}
 	}
 
