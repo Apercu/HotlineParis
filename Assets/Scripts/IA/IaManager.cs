@@ -28,7 +28,7 @@ public class IaManager : MonoBehaviour {
 	private List<Vector3> paths = new List<Vector3>();
 
 	private float nextTime = 0.0f;
-	private int layerWithoutEnnemies = 1 << 12;
+	private int layerWithoutEnnemies = ~( (1 << 12) | (1 << 10) );
 
 	void Start () {
 
@@ -37,8 +37,6 @@ public class IaManager : MonoBehaviour {
 			firstCheckPoint = checkPoint;
 			hasCheckPoints = true;
 		}
-
-		layerWithoutEnnemies = ~layerWithoutEnnemies;
 		
 		legs = transform.FindChild("legs").GetComponent<Animator>();
 		head = transform.FindChild("head").GetComponent<Animator>();
@@ -203,7 +201,6 @@ public class IaManager : MonoBehaviour {
 
 	void OnTriggerExit2D (Collider2D obj) {
 		if (obj.tag == "Player") {
-
 			hasPlayerInSight = false;
 		}
 	}
