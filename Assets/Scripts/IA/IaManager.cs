@@ -212,7 +212,7 @@ public class IaManager : MonoBehaviour {
 				alert.color = Color.white;
 			} else {
 				// On l'a pas eu, mais on va a la derniere position pour checker
-				if (lastKnowPosition != Vector3.zero && Vector3.Distance(transform.position, lastKnowPosition) > 1.0f) {
+				if (lastKnowPosition != Vector3.zero && Vector3.Distance(transform.position, lastKnowPosition) > 0.1f) {
 					moveTo(lastKnowPosition);
 					transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position - lastKnowPosition);
 					isWalking = true;
